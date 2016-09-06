@@ -17,16 +17,21 @@ if [ -z `pkg-config --modversion opencv` ]; then
   apt-get install libopencv-dev
 fi
 # git clone caffe
-if [ $# = 2 ]; then
-  git clone https://github.com/NVIDIA/caffe.git -b experimental/fp16 $1
-  cd $1
+if [ -n $1 ]; then
+  if [ ! -d "$1/caffe" ]; then
+    echo "git clone to $1/caffe dir" 
+    mkdir -p "$1/caffe"
+    su - ubuntu -c git clone https://github.com/NVIDIA/caffe.git -b experimental/fp16 "$1/caffe"
+  fi
+  cd "$1/caffe"
 else
   echo "git clone to current dir" 
-  git clone https://github.com/NVIDIA/caffe.git -b experimental/fp16
+  su - ubuntu -c git clone https://github.com/NVIDIA/caffe.git -b experimental/fp16
+  cd "caffe"
 fi
 # modify Makefile.config of caffe
-mv Makefile.config.sample Makefile.config
-sed -i -e "s/# USE_CUDNN := 1/USE_CUDNN := 1" Makefile.config
-sed -i -e "s/# NATIVE_FP16 := 1/NATIVE_FP16 := 1" Makefile.config
-sed -i -e "s/-gencode arch=compute_50,code=compute_50/-gencode arch=compute_53,code=sm_53 -gencode arch=compute_53,code=compute_53" Makefile.config
+cp Makefile.config.example Makefile.config
+sed -i -e "s/# USE_CUDNN := 1/USE_CUDNN := 1/" Makefile.config
+sed -i -e "s/# NATIVE_FP16 := 1/NATIVE_FP16 := 1/" Makefile.config
+sed -i -e "s/-gencode arch=compute_50,code=compute_50/-gencode arch=compute_53,code=sm_53 -gencode arch=compute_53,code=compute_53/" Makefile.config
 
