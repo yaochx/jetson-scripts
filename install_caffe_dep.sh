@@ -35,6 +35,7 @@ if [ -n $1 ]; then
 else
   echo "git clone to current dir" 
   su - ubuntu -c git clone https://github.com/NVIDIA/caffe.git -b experimental/fp16
+  su - ubuntu -c git clone https://github.com/NVlabs/cub.git
   cd "caffe"
 fi
 # modify Makefile.config of caffe
