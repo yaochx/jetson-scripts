@@ -1,4 +1,7 @@
 #! /usr/bin/env sh
+if [ $# != 1 ]; then
+   echo "usage: ./install_caffe_dep.sh dir"
+fi
 # root permission required
 if [ $(id -u) != 0 ]; then
    echo "This script requires root permissions"
@@ -22,6 +25,11 @@ if [ -n $1 ]; then
     echo "git clone to $1/caffe dir" 
     mkdir -p "$1/caffe"
     su - ubuntu -c git clone https://github.com/NVIDIA/caffe.git -b experimental/fp16 "$1/caffe"
+  fi
+  if [ ! -d "$1/cub" ]; then
+    echo "git clone to $1/cub dir" 
+    mkdir -p "$1/cub"
+    su - ubuntu -c git clone https://github.com/NVlabs/cub.git "$1/cub"
   fi
   cd "$1/caffe"
 else
